@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="twitty-backend:war">
+    <output-path>$PROJECT_DIR$/twitty-backend/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>twitty-backend</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="twitty-backend-0.0.1-SNAPSHOT.war">
+      <element id="artifact" artifact-name="twitty-backend:war exploded" />
+    </root>
+  </artifact>
+</component>
