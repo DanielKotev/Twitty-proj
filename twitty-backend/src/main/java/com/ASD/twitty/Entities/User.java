@@ -25,13 +25,7 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "followed"))
     private Set<User> following = new HashSet<>();
 
-    @OneToMany
-    @JoinTable(name="posts")
-    @JoinColumns({
-            @JoinColumn(name = "id"),
-            @JoinColumn(name = "comment"),
-            @JoinColumn(name = "user_id")
-    })
+    @OneToMany(mappedBy="id")
     private Set<Post> posts = new HashSet<>();
 
     public Long getId() {
@@ -64,6 +58,14 @@ public class User {
 
     public void setFollowing(Set<User> following) {
         this.following = following;
+    }
+
+    public Set<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
     }
 
     public User(Long id, String username, String password) {
