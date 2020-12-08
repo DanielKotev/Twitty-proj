@@ -25,6 +25,15 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "followed"))
     private Set<User> following = new HashSet<>();
 
+    @OneToMany
+    @JoinTable(name="posts")
+    @JoinColumns({
+            @JoinColumn(name = "id"),
+            @JoinColumn(name = "comment"),
+            @JoinColumn(name = "user_id")
+    })
+    private Set<Post> posts = new HashSet<>();
+
     public Long getId() {
         return id;
     }
