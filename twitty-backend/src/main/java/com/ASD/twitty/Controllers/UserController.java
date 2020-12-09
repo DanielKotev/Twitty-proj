@@ -34,7 +34,7 @@ public class UserController {
                                           @RequestParam() String password)
     {
         if(CheckUserName(username).isPresent()) {
-            return ResponseEntity.ok().body("User name is taken ");
+            return ResponseEntity.ok().body("Username is taken ");
         }
        else{
             boolean isNew = id == null;
@@ -45,8 +45,6 @@ public class UserController {
             response.put("generatedId", user.getId());
             if (isNew) {
                 response.put("message", "Успешно добавен");
-            } else {
-                response.put("message", "Успешно редактиран");
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
