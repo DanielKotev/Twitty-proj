@@ -14,6 +14,6 @@ public class Post {
     private String content;
 
     @ManyToOne
-    @JoinTable(name="user_id")
+    @JoinColumn(name="user_id")
     private User user;
 }
