@@ -25,10 +25,10 @@ public class PostController {
     @PostMapping("/save")
     public ResponseEntity<?> saveOrUpdate(@RequestParam(required = false) Long id,
                                           @RequestParam(required = false) String content,
-                                          @RequestParam(required = false) User user)
+                                          @RequestParam(required = false) Long user_id)
     {
         boolean isNew = id==null;
-        Post posts = new Post(id,content,user);
+        Post posts = new Post(id,content,user_id);
 
         Post post = postRepository.save(posts);
         Map<String,Object> response = new HashMap<>();
@@ -41,5 +41,12 @@ public class PostController {
             response.put("message","Успешно редактиран");
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deletePost(@RequestParam Long id)
+    {
+        postRepository.findPostById(id).ifPresent(post ->postRepository.delete(post));
+        return ResponseEntity.ok("Успешно изтрит");
     }
 }

@@ -19,14 +19,14 @@ public class User {
     @Column(name="password")
     private String password;
 
+    @OneToMany(mappedBy="id")
+    private Set<Post> posts = new HashSet<>();
+
     @ManyToMany
     @JoinTable(name = "followers",
         joinColumns = @JoinColumn(name = "following"),
         inverseJoinColumns = @JoinColumn(name = "followed"))
     private Set<User> following = new HashSet<>();
-
-    @OneToMany(mappedBy="id")
-    private Set<Post> posts = new HashSet<>();
 
     public Long getId() {
         return id;

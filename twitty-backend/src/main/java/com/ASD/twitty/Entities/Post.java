@@ -13,17 +13,16 @@ public class Post {
     @Column(name = "content")
     private String content;
 
-    @ManyToOne
-    @JoinColumn(name="user_id")
-    private User user;
+    @Column(name = "user_id")
+    private Long user_id;
 
     public Post() {
     }
 
-    public Post(Long id, String content, User user) {
+    public Post(Long id, String content, Long user_id) {
         this.id = id;
         this.content = content;
-        this.user = user;
+        this.user_id = user_id;
     }
 
     public Long getId() {
@@ -42,12 +41,12 @@ public class Post {
         this.content = content;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUser_id() {
+        return user_id;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser_id(Long user_id) {
+        this.user_id = user_id;
     }
 
 
