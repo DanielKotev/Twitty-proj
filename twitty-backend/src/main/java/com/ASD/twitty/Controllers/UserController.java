@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -24,24 +25,30 @@ public class UserController {
         return userRepository.findAll();
     }
 
+    public Optional<User> CheckUserName(@RequestParam String userName){ return userRepository.findUserByUsername(userName); }
+
+
     @PostMapping("/save")
     public ResponseEntity<?> saveOrUpdate(@RequestParam(required = false) Long id,
-                                          @RequestParam(required = false) String username,
-                                          @RequestParam(required = false) String password)
+                                          @RequestParam() String username,
+                                          @RequestParam() String password)
     {
-        boolean isNew = id==null;
-        User users = new User(id,username,password);
+        if(CheckUserName(username).isPresent()) {
+            return ResponseEntity.ok().body("User name is taken ");
+        }
+       else{
+            boolean isNew = id == null;
+            Map<String, Object> response = new HashMap<>();
+            User users = new User(id, username, password);
+            User user = userRepository.save(users);
 
-        User user = userRepository.save(users);
-        Map<String,Object> response = new HashMap<>();
-        response.put("generatedId",user.getId());
-        if(isNew)
-        {
-            response.put("message","Успешно добавен");
+            response.put("generatedId", user.getId());
+            if (isNew) {
+                response.put("message", "Успешно добавен");
+            } else {
+                response.put("message", "Успешно редактиран");
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        else {
-            response.put("message","Успешно редактиран");
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

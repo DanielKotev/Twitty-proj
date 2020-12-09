@@ -1,5 +1,7 @@
 package com.ASD.twitty.Entities;
 
+import org.springframework.lang.NonNull;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,9 +15,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NonNull
     @Column(name = "username")
     private String username;
 
+    @NonNull
     @Column(name="password")
     private String password;
 
