@@ -21,6 +21,7 @@ public class User {
     @Column(name="password")
     private String password;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "followers",
         joinColumns = @JoinColumn(name = "following"),
@@ -28,7 +29,7 @@ public class User {
     private Set<User> following = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy="user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="user")
     private Set<Post> posts = new HashSet<>();
 
     public Long getId() {

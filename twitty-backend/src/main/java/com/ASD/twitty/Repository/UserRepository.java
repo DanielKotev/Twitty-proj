@@ -8,6 +8,6 @@ import java.util.Set;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query("SELECT p FROM User u JOIN u.following f JOIN f.posts p WHERE u.id = :id")
+    @Query("SELECT p FROM User u JOIN u.following f JOIN f.posts p WHERE u.id = :id OR p.user.id = :id")
     Set<Post> fingPostsOfFollowedUsers(Long id);
 }

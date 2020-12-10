@@ -56,4 +56,34 @@ public class UserController {
                 ResponseEntity.ok().body("No posts found");
 
     }
+
+    @PostMapping("/follow")
+    public ResponseEntity<?> follow(@RequestParam Long followerId, @RequestParam Long followedId) {
+
+        Optional<User> followed = userRepository.findById(followedId);
+        Optional<User> follower = userRepository.findById(followerId);
+
+        if (!followed.isPresent() || !follower.isPresent()) {
+            return ResponseEntity.ok().body("Invalid id!");
+        }
+
+        follower.get().getFollowing().add(followed.get());
+        userRepository.save(follower.get());
+        return ResponseEntity.ok().body("User successfuly followed!");
+    }
+
+    @PostMapping("/unfollow")
+    public ResponseEntity<?> unfollow(@RequestParam Long followerId, @RequestParam Long followedId) {
+
+        Optional<User> followed = userRepository.findById(followedId);
+        Optional<User> follower = userRepository.findById(followerId);
+
+        if (!followed.isPresent() || !follower.isPresent()) {
+            return ResponseEntity.ok().body("Invalid id!");
+        }
+
+        follower.get().getFollowing().remove(followed.get());
+        userRepository.save(follower.get());
+        return ResponseEntity.ok().body("User successfuly unfollowed!");
+    }
 }
