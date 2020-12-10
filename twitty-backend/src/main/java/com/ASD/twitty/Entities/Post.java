@@ -1,6 +1,8 @@
 package com.ASD.twitty.Entities;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "posts")
@@ -15,6 +17,10 @@ public class Post {
 
     @Column(name = "user_id")
     private Long user_id;
+
+    @OneToMany
+    @JoinColumn(name = "post_id")
+    Set<Comment> comments = new HashSet<>();
 
     public Post() {
     }
@@ -49,5 +55,11 @@ public class Post {
         this.user_id = user_id;
     }
 
+    public Set<Comment> getComments() {
+        return comments;
+    }
 
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
 }

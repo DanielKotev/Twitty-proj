@@ -19,7 +19,8 @@ public class User {
     @Column(name="password")
     private String password;
 
-    @OneToMany(mappedBy="id")
+    @OneToMany
+    @JoinColumn(name = "user_id")
     private Set<Post> posts = new HashSet<>();
 
     @ManyToMany

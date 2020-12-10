@@ -1,8 +1,8 @@
 package com.ASD.twitty.Controllers;
 
+import com.ASD.twitty.Entities.Comment;
 import com.ASD.twitty.Entities.Post;
-import com.ASD.twitty.Entities.User;
-import com.ASD.twitty.Repository.PostRepository;
+import com.ASD.twitty.Repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,27 +12,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*",maxAge = 3600)
 @RestController
-@RequestMapping("/post")
-public class PostController {
+@RequestMapping("/comment")
+public class CommentController {
     @Autowired
-    PostRepository postRepository;
+    CommentRepository commentRepository;
 
     @GetMapping("/all")
-    public List<Post> getPosts(){ return postRepository.findAll(); }
+    public List<Comment> getPosts(){ return commentRepository.findAll(); }
 
     @PostMapping("/save")
     public ResponseEntity<?> saveOrEdit(@RequestParam(required = false) Long id,
                                           @RequestParam(required = false) String content,
-                                          @RequestParam(required = false) Long user_id)
+                                          @RequestParam(required = false) Long user_id,
+                                          @RequestParam(required = false) Long post_id)
     {
         boolean isNew = id==null;
-        Post posts = new Post(id,content,user_id);
+        Comment comments = new Comment(id,content,user_id,post_id);
 
-        Post post = postRepository.save(posts);
+        Comment comment = commentRepository.save(comments);
         Map<String,Object> response = new HashMap<>();
-        response.put("generatedId",post.getId());
+        response.put("generatedId",comment.getId());
         if(isNew)
         {
             response.put("message","Успешно добавен");
@@ -44,9 +45,9 @@ public class PostController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deletePost(@RequestParam Long id)
+    public ResponseEntity<?> deleteComment(@RequestParam(required = false) Long id)
     {
-        postRepository.findPostById(id).ifPresent(post ->postRepository.delete(post));
+        commentRepository.findCommentById(id).ifPresent(comment -> commentRepository.delete(comment));
         return ResponseEntity.ok("Успешно изтрит");
     }
 }
