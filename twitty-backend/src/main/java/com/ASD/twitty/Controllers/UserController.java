@@ -1,5 +1,6 @@
 package com.ASD.twitty.Controllers;
 
+import com.ASD.twitty.Entities.Post;
 import com.ASD.twitty.Entities.User;
 import com.ASD.twitty.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -23,6 +22,8 @@ public class UserController {
     {
         return userRepository.findAll();
     }
+
+    public Optional<User> CheckUserName(@RequestParam String userName){ return userRepository.findUserByUsername(userName); }
 
     @PostMapping("/save")
     public ResponseEntity<?> saveOrUpdate(@RequestParam(required = false) Long id,
