@@ -18,9 +18,9 @@ public class UserController {
     UserRepository userRepository;
 
     @GetMapping("/all")
-    public List<User> getUsers()
+    public List<User> getActiveUsers()
     {
-        return userRepository.findAll();
+        return userRepository.findActiveUsers();
     }
 
     public Optional<User> CheckUserName(@RequestParam String userName){ return userRepository.findUserByUsername(userName); }
@@ -36,7 +36,7 @@ public class UserController {
        else{
             boolean isNew = id == null;
             Map<String, Object> response = new HashMap<>();
-            User users = new User(id, username, password);
+            User users = new User(id, username, password,true);
             User user = userRepository.save(users);
 
             response.put("generatedId", user.getId());

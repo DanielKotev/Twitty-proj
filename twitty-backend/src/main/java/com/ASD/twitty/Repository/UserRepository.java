@@ -4,12 +4,15 @@ import com.ASD.twitty.Entities.Post;
 import com.ASD.twitty.Entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 import java.util.Set;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+
     @Query("SELECT u from User u Where u.username=:username")
      Optional<User> findUserByUsername(String username);
 
@@ -20,4 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "WHERE u.id = :id OR p.user.id = :id " +
             "ORDER BY p.id DESC")
     Set<Post> fingPostsOfFollowedUsers(Long id);
+
+    @Query("SELECT u from User u Where u.active=true")
+    List<User> findActiveUsers();
 }

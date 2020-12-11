@@ -1,5 +1,8 @@
 package com.ASD.twitty.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.lang.NonNull;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +15,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name="active")
+    private boolean active;
 
     @NonNull
     @Column(name = "username")
@@ -64,10 +70,19 @@ public class User {
         this.following = following;
     }
 
-    public User(Long id, String username, String password) {
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public User(Long id, String username, String password,boolean active) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.active=active;
     }
 
     public User() {
