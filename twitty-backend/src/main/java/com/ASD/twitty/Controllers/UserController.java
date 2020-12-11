@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -24,9 +23,6 @@ public class UserController {
     {
         return userRepository.findAll();
     }
-
-    public Optional<User> CheckUserName(@RequestParam String userName){ return userRepository.findUserByUsername(userName); }
-
 
     @PostMapping("/save")
     public ResponseEntity<?> saveOrUpdate(@RequestParam(required = false) Long id,
@@ -48,5 +44,46 @@ public class UserController {
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
+    }
+
+    @GetMapping("/followedPosts")
+    public ResponseEntity<?> getPostsOfFollowedUsers(@RequestParam Long id) {
+
+        Set<Post> result = userRepository.fingPostsOfFollowedUsers(id);
+
+        return !result.isEmpty() ?
+                ResponseEntity.ok().body(result) :
+                ResponseEntity.ok().body("No posts found");
+
+    }
+
+    @PostMapping("/follow")
+    public ResponseEntity<?> follow(@RequestParam Long followerId, @RequestParam Long followedId) {
+
+        Optional<User> followed = userRepository.findById(followedId);
+        Optional<User> follower = userRepository.findById(followerId);
+
+        if (!followed.isPresent() || !follower.isPresent()) {
+            return ResponseEntity.ok().body("Invalid id!");
+        }
+
+        follower.get().getFollowing().add(followed.get());
+        userRepository.save(follower.get());
+        return ResponseEntity.ok().body("User successfuly followed!");
+    }
+
+    @PostMapping("/unfollow")
+    public ResponseEntity<?> unfollow(@RequestParam Long followerId, @RequestParam Long followedId) {
+
+        Optional<User> followed = userRepository.findById(followedId);
+        Optional<User> follower = userRepository.findById(followerId);
+
+        if (!followed.isPresent() || !follower.isPresent()) {
+            return ResponseEntity.ok().body("Invalid id!");
+        }
+
+        follower.get().getFollowing().remove(followed.get());
+        userRepository.save(follower.get());
+        return ResponseEntity.ok().body("User successfuly unfollowed!");
     }
 }

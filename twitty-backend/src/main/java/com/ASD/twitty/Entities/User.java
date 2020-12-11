@@ -1,7 +1,5 @@
 package com.ASD.twitty.Entities;
 
-import org.springframework.lang.NonNull;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,11 +21,16 @@ public class User {
     @Column(name="password")
     private String password;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "followers",
         joinColumns = @JoinColumn(name = "following"),
         inverseJoinColumns = @JoinColumn(name = "followed"))
     private Set<User> following = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy="user")
+    private Set<Post> posts = new HashSet<>();
 
     public Long getId() {
         return id;
