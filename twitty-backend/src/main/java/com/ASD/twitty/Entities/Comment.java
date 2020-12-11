@@ -14,10 +14,10 @@ public class Comment {
     private String content;
 
     @ManyToOne
-    @JoinTable(name="user_id")
+    @JoinColumn(name="user_id")
     private User user;
 
     @ManyToOne
-    @JoinTable(name="post_id")
+    @JoinColumn(name="post_id")
     private Post post;
 }

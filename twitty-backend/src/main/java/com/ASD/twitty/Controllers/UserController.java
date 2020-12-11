@@ -1,20 +1,21 @@
 package com.ASD.twitty.Controllers;
 
+import com.ASD.twitty.Entities.Post;
 import com.ASD.twitty.Entities.User;
+import com.ASD.twitty.Repository.PostRepository;
 import com.ASD.twitty.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
     @Autowired
     UserRepository userRepository;
 
@@ -43,5 +44,46 @@ public class UserController {
             response.put("message","Успешно редактиран");
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/followedPosts")
+    public ResponseEntity<?> getPostsOfFollowedUsers(@RequestParam Long id) {
+
+        Set<Post> result = userRepository.fingPostsOfFollowedUsers(id);
+
+        return !result.isEmpty() ?
+                ResponseEntity.ok().body(result) :
+                ResponseEntity.ok().body("No posts found");
+
+    }
+
+    @PostMapping("/follow")
+    public ResponseEntity<?> follow(@RequestParam Long followerId, @RequestParam Long followedId) {
+
+        Optional<User> followed = userRepository.findById(followedId);
+        Optional<User> follower = userRepository.findById(followerId);
+
+        if (!followed.isPresent() || !follower.isPresent()) {
+            return ResponseEntity.ok().body("Invalid id!");
+        }
+
+        follower.get().getFollowing().add(followed.get());
+        userRepository.save(follower.get());
+        return ResponseEntity.ok().body("User successfuly followed!");
+    }
+
+    @PostMapping("/unfollow")
+    public ResponseEntity<?> unfollow(@RequestParam Long followerId, @RequestParam Long followedId) {
+
+        Optional<User> followed = userRepository.findById(followedId);
+        Optional<User> follower = userRepository.findById(followerId);
+
+        if (!followed.isPresent() || !follower.isPresent()) {
+            return ResponseEntity.ok().body("Invalid id!");
+        }
+
+        follower.get().getFollowing().remove(followed.get());
+        userRepository.save(follower.get());
+        return ResponseEntity.ok().body("User successfuly unfollowed!");
     }
 }
