@@ -20,7 +20,7 @@ public class UserController {
     @GetMapping("/all")
     public List<User> getActiveUsers()
     {
-        return userRepository.findActiveUsers();
+        return userRepository.findAll();
     }
 
     public Optional<User> CheckUserName(@RequestParam String userName){ return userRepository.findUserByUsername(userName); }
@@ -34,18 +34,37 @@ public class UserController {
             return ResponseEntity.ok().body("Username is taken ");
         }
        else{
-            boolean isNew = id == null;
             Map<String, Object> response = new HashMap<>();
             User users = new User(id, username, password,true);
             User user = userRepository.save(users);
 
             response.put("generatedId", user.getId());
-            if (isNew) {
                 response.put("message", "Успешно добавен");
-            }
+
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
     }
+
+    @PostMapping("/DeactivateUser")
+    public ResponseEntity<?> deactivateUser(@RequestParam() String username)
+    {
+        if(userRepository.findActiveUser(username).isPresent())
+        {
+            User users=userRepository.findActiveUser(username).get();
+            users.setActive(false);
+            User user = userRepository.save(users);
+
+            return ResponseEntity.ok().body("User is Deactivated");
+        }
+        else {
+            User users=userRepository.findActiveUser(username).get();
+            users.setActive(true);
+            User user = userRepository.save(users);
+            return ResponseEntity.ok().body("User is active");
+        }
+
+    }
+
 
     @GetMapping("/followedPosts")
     public ResponseEntity<?> getPostsOfFollowedUsers(@RequestParam Long id) {
@@ -70,7 +89,7 @@ public class UserController {
 
         follower.get().getFollowing().add(followed.get());
         userRepository.save(follower.get());
-        return ResponseEntity.ok().body("User successfuly followed!");
+        return ResponseEntity.ok().body("User successfully followed!");
     }
 
     @PostMapping("/unfollow")
