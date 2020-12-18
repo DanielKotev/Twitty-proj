@@ -57,7 +57,7 @@ public class UserController {
             return ResponseEntity.ok().body("User is Deactivated");
         }
         else {
-            User users=userRepository.findActiveUser(username).get();
+            User users=userRepository.findUserByUsername(username).get();
             users.setActive(true);
             User user = userRepository.save(users);
             return ResponseEntity.ok().body("User is active");
