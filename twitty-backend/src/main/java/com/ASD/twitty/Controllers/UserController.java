@@ -1,5 +1,6 @@
 package com.ASD.twitty.Controllers;
 
+import com.ASD.twitty.Entities.Comment;
 import com.ASD.twitty.Entities.Post;
 import com.ASD.twitty.Entities.User;
 import com.ASD.twitty.Repository.UserRepository;
@@ -65,6 +66,17 @@ public class UserController {
 
     }
 
+
+    @GetMapping("/CommentsPost")
+    public ResponseEntity<?> getCommentsOfPosts(@RequestParam Long id) {
+
+        Set<Comment> result = userRepository.findCommentsOfPosts(id);
+
+        return !result.isEmpty() ?
+                ResponseEntity.ok().body(result) :
+                ResponseEntity.ok().body("No Comments Found");
+
+    }
 
     @GetMapping("/followedPosts")
     public ResponseEntity<?> getPostsOfFollowedUsers(@RequestParam Long id) {
