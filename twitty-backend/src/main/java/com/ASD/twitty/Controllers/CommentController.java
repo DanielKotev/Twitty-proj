@@ -29,6 +29,7 @@ public class CommentController {
                                           @RequestParam(required = false) User user,
                                           @RequestParam(required = false) Post post)
     {
+
         boolean isNew = id==null;
         Comment comments = new Comment(id,content,user,post);
 
