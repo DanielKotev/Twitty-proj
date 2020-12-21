@@ -43,7 +43,18 @@ public class UserController {
         else {
             response.put("message","Успешно редактиран");
         }
+      
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/commentsPost")
+    public ResponseEntity<?> getCommentsOfPosts(@RequestParam Long id) {
+
+        Set<Comment> result = userRepository.findCommentsOfPosts(id);
+
+        return !result.isEmpty() ?
+                ResponseEntity.ok().body(result) :
+                ResponseEntity.ok().body("No Comments Found");
     }
 
     @GetMapping("/followedPosts")
