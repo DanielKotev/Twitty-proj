@@ -1,8 +1,8 @@
 package com.ASD.twitty.Controllers;
 
-import com.ASD.twitty.Entities.Comment;
 import com.ASD.twitty.Entities.Post;
 import com.ASD.twitty.Entities.User;
+import com.ASD.twitty.Repository.PostRepository;
 import com.ASD.twitty.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,57 +15,37 @@ import java.util.*;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
     @Autowired
     UserRepository userRepository;
 
     @GetMapping("/all")
-    public List<User> getActiveUsers()
+    public List<User> getUsers()
     {
         return userRepository.findAll();
     }
 
-    public Optional<User> CheckUserName(@RequestParam String userName){ return userRepository.findUserByUsername(userName); }
-
     @PostMapping("/save")
     public ResponseEntity<?> saveOrUpdate(@RequestParam(required = false) Long id,
-                                          @RequestParam() String username,
-                                          @RequestParam() String password)
+                                          @RequestParam(required = false) String username,
+                                          @RequestParam(required = false) String password)
     {
-        if(CheckUserName(username).isPresent()) {
-            return ResponseEntity.ok().body("Username is taken ");
-        }
-       else{
-            Map<String, Object> response = new HashMap<>();
-            User users = new User(id, username, password,true);
-            User user = userRepository.save(users);
+        boolean isNew = id==null;
+        User users = new User(id,username,password);
 
-            response.put("generatedId", user.getId());
-                response.put("message", "Успешно добавен");
-
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-    }
-
-    @PostMapping("/DeactivateUser")
-    public ResponseEntity<?> deactivateUser(@RequestParam() String username)
-    {
-        if(userRepository.findActiveUser(username).isPresent())
+        User user = userRepository.save(users);
+        Map<String,Object> response = new HashMap<>();
+        response.put("generatedId",user.getId());
+        if(isNew)
         {
-            User users=userRepository.findActiveUser(username).get();
-            users.setActive(false);
-            User user = userRepository.save(users);
-
-            return ResponseEntity.ok().body("User is Deactivated");
+            response.put("message","Успешно добавен");
         }
         else {
-            User users=userRepository.findUserByUsername(username).get();
-            users.setActive(true);
-            User user = userRepository.save(users);
-            return ResponseEntity.ok().body("User is active");
+            response.put("message","Успешно редактиран");
         }
-
+      
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 
     @GetMapping("/commentsPost")
     public ResponseEntity<?> getCommentsOfPosts(@RequestParam Long id) {
@@ -75,7 +55,6 @@ public class UserController {
         return !result.isEmpty() ?
                 ResponseEntity.ok().body(result) :
                 ResponseEntity.ok().body("No Comments Found");
-
     }
 
     @GetMapping("/followedPosts")
@@ -101,7 +80,7 @@ public class UserController {
 
         follower.get().getFollowing().add(followed.get());
         userRepository.save(follower.get());
-        return ResponseEntity.ok().body("User successfully followed!");
+        return ResponseEntity.ok().body("User successfuly followed!");
     }
 
     @PostMapping("/unfollow")
