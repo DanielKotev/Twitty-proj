@@ -2,6 +2,7 @@ package com.ASD.twitty.Controllers;
 
 import com.ASD.twitty.Entities.Comment;
 import com.ASD.twitty.Entities.Post;
+import com.ASD.twitty.Entities.User;
 import com.ASD.twitty.Repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,11 +26,11 @@ public class CommentController {
     @PostMapping("/save")
     public ResponseEntity<?> saveOrEdit(@RequestParam(required = false) Long id,
                                           @RequestParam(required = false) String content,
-                                          @RequestParam(required = false) Long user_id,
-                                          @RequestParam(required = false) Long post_id)
+                                          @RequestParam(required = false) User user,
+                                          @RequestParam(required = false) Post post)
     {
         boolean isNew = id==null;
-        Comment comments = new Comment(id,content,user_id,post_id);
+        Comment comments = new Comment(id,content,user,post);
 
         Comment comment = commentRepository.save(comments);
         Map<String,Object> response = new HashMap<>();

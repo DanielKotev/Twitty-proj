@@ -1,5 +1,7 @@
 package com.ASD.twitty.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -13,22 +15,40 @@ public class Comment {
     @Column(name = "content")
     private String content;
 
-    @Column
+    @JsonIgnore
+    @ManyToOne
     @JoinColumn(name="user_id")
-    private Long user_id;
+    private User user;
 
-    @Column
+    @JsonIgnore
+    @ManyToOne
     @JoinColumn(name="post_id")
-    private Long post_id;
+    private Post post;
 
-    public Comment(Long id, String content, Long user_id, Long post_id) {
+    public Comment(Long id, String content, User user, Post post) {
         this.id = id;
         this.content = content;
-        this.user_id = user_id;
-        this.post_id = post_id;
+        this.user = user;
+        this.post = post;
     }
 
     public Comment() {
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     public Long getId() {
@@ -47,19 +67,19 @@ public class Comment {
         this.content = content;
     }
 
-    public Long getUser_id() {
-        return user_id;
-    }
+//    public Long getUser_id() {
+//        return user_id;
+//    }
+//
+//    public void setUser_id(Long user_id) {
+//        this.user_id = user_id;
+//    }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
-    }
-
-    public Long getPost_id() {
-        return post_id;
-    }
-
-    public void setPost_id(Long post_id) {
-        this.post_id = post_id;
-    }
+//    public Long getPost_id() {
+//        return post_id;
+//    }
+//
+//    public void setPost_id(Long post_id) {
+//        this.post_id = post_id;
+//    }
 }

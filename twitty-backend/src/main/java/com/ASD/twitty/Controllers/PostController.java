@@ -25,10 +25,10 @@ public class PostController {
     @PostMapping("/save")
     public ResponseEntity<?> saveOrEdit(@RequestParam(required = false) Long id,
                                           @RequestParam(required = false) String content,
-                                          @RequestParam(required = false) Long user_id)
+                                          @RequestParam(required = false) User user)
     {
         boolean isNew = id==null;
-        Post posts = new Post(id,content,user_id);
+        Post posts = new Post(id,content,user);
 
         Post post = postRepository.save(posts);
         Map<String,Object> response = new HashMap<>();

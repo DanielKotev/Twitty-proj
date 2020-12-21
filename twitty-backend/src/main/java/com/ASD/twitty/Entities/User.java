@@ -1,5 +1,7 @@
 package com.ASD.twitty.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,8 +21,7 @@ public class User {
     @Column(name="password")
     private String password;
 
-    @OneToMany
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy="user")
     private Set<Post> posts = new HashSet<>();
 
     @ManyToMany

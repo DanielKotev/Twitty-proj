@@ -1,5 +1,7 @@
 package com.ASD.twitty.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,20 +17,30 @@ public class Post {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "user_id")
-    private Long user_id;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    private User user;
 
-    @OneToMany
-    @JoinColumn(name = "post_id")
+
+    @OneToMany(mappedBy = "post")
     Set<Comment> comments = new HashSet<>();
 
     public Post() {
     }
 
-    public Post(Long id, String content, Long user_id) {
+    public Post(Long id, String content, User user) {
         this.id = id;
         this.content = content;
-        this.user_id = user_id;
+        this.user = user;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
     }
 
     public Long getId() {
@@ -47,19 +59,26 @@ public class Post {
         this.content = content;
     }
 
-    public Long getUser_id() {
-        return user_id;
+    public User getUser() {
+        return user;
     }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+    public void setUser(User user) {
+        this.user = user;
     }
-
-    public Set<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(Set<Comment> comments) {
-        this.comments = comments;
-    }
+//    public Long getUser_id() {
+//        return user_id;
+//    }
+//
+//    public void setUser_id(Long user_id) {
+//        this.user_id = user_id;
+//    }
+//
+//    public Set<Comment> getComments() {
+//        return comments;
+//    }
+//
+//    public void setComments(Set<Comment> comments) {
+//        this.comments = comments;
+//    }
 }
