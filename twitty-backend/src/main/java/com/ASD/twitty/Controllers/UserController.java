@@ -67,7 +67,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/CommentsPost")
+    @GetMapping("/commentsPost")
     public ResponseEntity<?> getCommentsOfPosts(@RequestParam Long id) {
 
         Set<Comment> result = userRepository.findCommentsOfPosts(id);
