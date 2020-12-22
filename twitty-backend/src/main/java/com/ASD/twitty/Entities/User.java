@@ -1,6 +1,7 @@
 package com.ASD.twitty.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.istack.NotNull;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
@@ -20,7 +21,7 @@ public class User {
     private String username;
 
     @JsonIgnore
-    @NonNull
+    @NotNull
     @Column(name="password")
     private String password;
 
@@ -34,7 +35,6 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "followed"))
     private Set<User> following = new HashSet<>();
 
-    @JsonIgnore
     @OneToMany(mappedBy="user")
     private Set<Post> posts = new HashSet<>();
 
