@@ -1,6 +1,10 @@
 package com.ASD.twitty.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "posts")
@@ -13,9 +17,30 @@ public class Post {
     @Column(name = "content")
     private String content;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="user_id")
     private User user;
+
+    @OneToMany(mappedBy = "post")
+    Set<Comment> comments = new HashSet<>();
+
+    public Post() {
+    }
+
+    public Post(Long id, String content, User user) {
+        this.id = id;
+        this.content = content;
+        this.user = user;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
 
     public Long getId() {
         return id;

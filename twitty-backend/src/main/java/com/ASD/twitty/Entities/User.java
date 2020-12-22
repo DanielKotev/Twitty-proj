@@ -16,10 +16,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="active")
-    private boolean active;
-
-    @NonNull
     @Column(name = "username")
     private String username;
 
@@ -27,6 +23,9 @@ public class User {
     @NonNull
     @Column(name="password")
     private String password;
+
+    @Column(name="active")
+    private boolean active;
 
     @JsonIgnore
     @ManyToMany
@@ -71,6 +70,14 @@ public class User {
         this.following = following;
     }
 
+    public Set<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
+    }
+
     public boolean isActive() {
         return active;
     }
@@ -79,11 +86,10 @@ public class User {
         this.active = active;
     }
 
-    public User(Long id, String username, String password,boolean active) {
+    public User(Long id, String username, String password) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.active=active;
     }
 
     public User() {

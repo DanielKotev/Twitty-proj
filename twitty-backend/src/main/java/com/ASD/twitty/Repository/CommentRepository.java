@@ -1,12 +1,13 @@
 package com.ASD.twitty.Repository;
 
+import com.ASD.twitty.Entities.Comment;
 import com.ASD.twitty.Entities.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface PostRepository extends JpaRepository<Post,Long> {
-    @Query("SELECT p FROM Post p WHERE p.id=:id")
-    Optional<Post> findPostById(Long id);
+public interface CommentRepository extends JpaRepository<Comment,Long> {
+    @Query("SELECT c FROM Comment c WHERE c.id=:id")
+    Optional<Comment> findCommentById(Long id);
 }
