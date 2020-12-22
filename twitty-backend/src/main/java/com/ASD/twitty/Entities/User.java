@@ -18,17 +18,21 @@ public class User {
     @Column(name = "username")
     private String username;
 
+    @JsonIgnore
+    @NonNull
     @Column(name="password")
     private String password;
 
-    @OneToMany(mappedBy="user")
-    private Set<Post> posts = new HashSet<>();
-
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "followers",
         joinColumns = @JoinColumn(name = "following"),
         inverseJoinColumns = @JoinColumn(name = "followed"))
     private Set<User> following = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy="user")
+    private Set<Post> posts = new HashSet<>();
 
     public Long getId() {
         return id;
