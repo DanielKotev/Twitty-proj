@@ -46,7 +46,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/DeactivateUser")
+    @PostMapping("/deactivateUser")
     public ResponseEntity<?> deactivateUser(@RequestParam() String username)
     {
         if(userRepository.findActiveUser(username).isPresent())
