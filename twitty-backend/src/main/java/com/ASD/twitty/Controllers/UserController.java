@@ -1,5 +1,6 @@
 package com.ASD.twitty.Controllers;
 
+import com.ASD.twitty.Entities.Comment;
 import com.ASD.twitty.Entities.Post;
 import com.ASD.twitty.Entities.User;
 import com.ASD.twitty.Repository.PostRepository;

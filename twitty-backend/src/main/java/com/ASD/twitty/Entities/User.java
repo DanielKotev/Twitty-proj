@@ -1,6 +1,7 @@
 package com.ASD.twitty.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -22,6 +23,9 @@ public class User {
     @NonNull
     @Column(name="password")
     private String password;
+
+    @Column(name="active")
+    private boolean active;
 
     @JsonIgnore
     @ManyToMany
@@ -72,6 +76,14 @@ public class User {
 
     public void setPosts(Set<Post> posts) {
         this.posts = posts;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public User(Long id, String username, String password) {
