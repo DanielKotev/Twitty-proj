@@ -15,12 +15,10 @@ public class Comment {
     @Column(name = "content")
     private String content;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="user_id")
     private User user;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="post_id")
     private Post post;

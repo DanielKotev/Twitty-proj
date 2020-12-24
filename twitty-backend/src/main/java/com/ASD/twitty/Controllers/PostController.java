@@ -1,5 +1,6 @@
 package com.ASD.twitty.Controllers;
 
+import com.ASD.twitty.Entities.Comment;
 import com.ASD.twitty.Entities.Post;
 import com.ASD.twitty.Entities.User;
 import com.ASD.twitty.Repository.PostRepository;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -48,5 +50,18 @@ public class PostController {
     {
         postRepository.findPostById(id).ifPresent(post ->postRepository.delete(post));
         return ResponseEntity.ok("Успешно изтрит");
+    }
+
+    @GetMapping("/comments")
+    public ResponseEntity<?> getCommentsOfPosts(@RequestParam Long id) {
+
+        Set<Comment> result = postRepository.findCommentsOfPosts(id);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("comments", result);
+        response.put("numberOfComments", result.size());
+        response.put("message", result.isEmpty() ? "No comments found" : "Found " + result.size() + " comments");
+
+        return ResponseEntity.ok().body(response);
     }
 }
