@@ -12,6 +12,21 @@ class PostService {
                     }
             })
     }
+    savePost(content, userId, id = null) {
+        return axios.post(API_URL + "/save",
+            {
+                id: id,
+                content: content,
+                userId: userId
+            })
+    }
+    deletePost(id) {
+        return axios.delete(API_URL + "/delete", {
+            params: {
+                id: id
+            }
+        })
+    }
 }
 
 export default new PostService()

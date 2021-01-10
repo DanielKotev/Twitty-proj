@@ -25,4 +25,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "(SELECT f.id FROM User u JOIN u.following f WHERE u.id = :id) " +
             "ORDER BY p.id DESC")
     Page<Post> fingPostsOfFollowedUsers(Pageable pageable, Long id);
+
+    @Query("SELECT p FROM User u JOIN u.posts p WHERE u.id = :id ORDER BY p.id DESC")
+    Page<Post> fingPostsOfUser(Pageable pageable, Long id);
+
+    @Query("SELECT u FROM User u JOIN u.following f WHERE (u.id = :followerId and f.id = :followedId)")
+    Set<User> isFollowing(Long followerId, Long followedId);
 }

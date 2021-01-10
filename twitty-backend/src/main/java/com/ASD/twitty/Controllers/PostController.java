@@ -1,9 +1,11 @@
 package com.ASD.twitty.Controllers;
 
+import com.ASD.twitty.Beans.PostRequest;
 import com.ASD.twitty.Entities.Comment;
 import com.ASD.twitty.Entities.Post;
 import com.ASD.twitty.Entities.User;
 import com.ASD.twitty.Repository.PostRepository;
+import com.ASD.twitty.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,16 +23,19 @@ public class PostController {
     @Autowired
     PostRepository postRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @GetMapping("/all")
     public List<Post> getPosts(){ return postRepository.findAll(); }
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveOrEdit(@RequestParam(required = false) Long id,
-                                          @RequestParam(required = false) String content,
-                                          @RequestParam(required = false) User user)
+    public ResponseEntity<?> saveOrEdit(@RequestBody PostRequest form)
     {
-        boolean isNew = id==null;
-        Post posts = new Post(id,content,user);
+        boolean isNew = form.getId() == null;
+        Post posts = new Post(form.getId(),
+                form.getContent(),
+                userRepository.findById(form.getUserId()).get());
 
         Post post = postRepository.save(posts);
         Map<String,Object> response = new HashMap<>();

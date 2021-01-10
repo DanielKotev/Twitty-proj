@@ -1,29 +1,28 @@
 <template>
  <div id="form">
-   <b-form-textarea id="text-area" placeholder="Create a new post..." v-model="text"></b-form-textarea>
-   <b-button id="button" v-on:click="savePost">Post</b-button>
-   <b-alert :show="showAlert" dismissible v-on:dismissed="showAlert = false" variant="danger">The post must not be empty!</b-alert>
+   <b-form v-on:submit="savePost">
+     <b-form-textarea id="text-area" placeholder="Create a new post..." rows="6" v-model="text" no-resize required></b-form-textarea>
+     <b-button id="button" type="submit">Post</b-button>
+   </b-form>
  </div>
 </template>
 
 <script>
+import PostService from "../services/post-service";
+
 export default {
   name: "CreatePost",
   data () {
     return {
-      text:'',
-      showAlert: false
+      text:''
     }
   },
   methods: {
     savePost () {
-      if (this.text.length === 0) {
-        this.showAlert = true
-      }
-      else {
-        alert('post saved')
-        this.showAlert = false
-      }
+      PostService.savePost(this.text, this.$store.state.userId).then(
+          window.location.reload()
+      )
+      this.text = ''
     }
   }
 }
@@ -40,10 +39,14 @@ export default {
   }
 
   #text-area {
+    background: none;
+    border: none;
   }
 
   #button {
-    margin: 10px auto;
+    margin: 10px 0px;
+    bottom: 10px;
+    right: 10px;
   }
 
 </style>

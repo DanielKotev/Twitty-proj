@@ -27,6 +27,14 @@ public class UserController {
         return userRepository.findAll();
     }
 
+    @GetMapping("getById")
+    public Optional<User> getUserById(@RequestParam(required = false) Long id) {
+        if (id == null) {
+            return null;
+        }
+        return userRepository.findById(id);
+    }
+
     public Optional<User> CheckUserName(@RequestParam String userName){ return userRepository.findUserByUsername(userName); }
 
     @PostMapping("/save")
@@ -91,6 +99,28 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
+    @GetMapping("/posts")
+    public ResponseEntity<?> ownPosts(@RequestParam(defaultValue = "1") int currentPage,
+                                                     @RequestParam(defaultValue = "5") int perPage,
+                                                     @RequestParam Long id) {
+
+        Pageable pageable = PageRequest.of(currentPage - 1, perPage);
+        Page<Post> result = userRepository.fingPostsOfUser(pageable, id);
+
+        Map<String, Object> response = new HashMap<>();
+
+        if (result.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        response.put("posts", result.getContent());
+        response.put("currentPage", result.getNumber());
+        response.put("totalElements", result.getTotalElements());
+        response.put("totalPages", result.getTotalPages());
+
+        return ResponseEntity.ok().body(response);
+    }
+
     @PostMapping("/follow")
     public ResponseEntity<?> follow(@RequestParam Long followerId, @RequestParam Long followedId) {
 
@@ -119,5 +149,16 @@ public class UserController {
         follower.get().getFollowing().remove(followed.get());
         userRepository.save(follower.get());
         return ResponseEntity.ok().body("User successfuly unfollowed!");
+    }
+
+    @GetMapping("/isFollowing")
+    public ResponseEntity<?> isFollowing(@RequestParam Long followerId, @RequestParam Long followedId) {
+
+        Boolean isFollowing = !userRepository.isFollowing(followerId, followedId).isEmpty();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("isFollowing", isFollowing);
+
+        return ResponseEntity.ok().body(response);
     }
 }

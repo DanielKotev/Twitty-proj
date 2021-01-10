@@ -1,9 +1,12 @@
 package com.ASD.twitty.Controllers;
 
+import com.ASD.twitty.Beans.CommentRequest;
 import com.ASD.twitty.Entities.Comment;
 import com.ASD.twitty.Entities.Post;
 import com.ASD.twitty.Entities.User;
 import com.ASD.twitty.Repository.CommentRepository;
+import com.ASD.twitty.Repository.PostRepository;
+import com.ASD.twitty.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,18 +23,24 @@ public class CommentController {
     @Autowired
     CommentRepository commentRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    PostRepository postRepository;
+
     @GetMapping("/all")
     public List<Comment> getPosts(){ return commentRepository.findAll(); }
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveOrEdit(@RequestParam(required = false) Long id,
-                                          @RequestParam(required = false) String content,
-                                          @RequestParam(required = false) User user,
-                                          @RequestParam(required = false) Post post)
+    public ResponseEntity<?> saveOrEdit(@RequestBody CommentRequest form)
     {
 
-        boolean isNew = id==null;
-        Comment comments = new Comment(id,content,user,post);
+        boolean isNew = form.getId() == null;
+        Comment comments = new Comment(form.getId(),
+                form.getContent(),
+                userRepository.findById(form.getUserId()).get(),
+                postRepository.findPostById(form.getPostId()).get());
 
         Comment comment = commentRepository.save(comments);
         Map<String,Object> response = new HashMap<>();
@@ -47,7 +56,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteComment(@RequestParam(required = false) Long id)
+    public ResponseEntity<?> deleteComment(@RequestParam Long id)
     {
         commentRepository.findCommentById(id).ifPresent(comment -> commentRepository.delete(comment));
         return ResponseEntity.ok("Успешно изтрит");

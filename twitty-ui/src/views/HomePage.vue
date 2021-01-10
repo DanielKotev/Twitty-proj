@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     getNextPageOfPosts () {
-      UserService.getPostsOfFollowed(3, this.currentPage++, this.perPage).then(response => {
+      UserService.getPostsOfFollowed(this.$store.state.userId, this.currentPage++, this.perPage).then(response => {
         this.posts.push(...response.data.posts)
         this.totalPages = response.data.totalPages
       })
@@ -60,8 +60,6 @@ export default {
 #page-content {
   max-width: 600px;
   margin: 0px auto;
-  padding: 10px;
-  background-color: #fff;
 }
 
 .posts{

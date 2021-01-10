@@ -2,48 +2,50 @@
   <div>
     <div class="post">
       <div id="post-content">
-        <b-dropdown class="dropdown" size="sm" text="" variant="none" no-caret>
-          <template #button-content>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
-              <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
-            </svg>
-          </template>
-          <b-dropdown-item-button>Delete</b-dropdown-item-button>
-          <b-dropdown-item-button>Edit</b-dropdown-item-button>
-        </b-dropdown>
-        <h5 class="name">{{post.user.username}}</h5>
-        <pre class="text-format">{{post.content}}</pre>
+        <div v-if="isOwnPost()">
+          <b-dropdown class="dropdown no-background" size="sm" text="" variant="none" no-caret>
+            <template #button-content>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+              </svg>
+            </template>
+            <b-dropdown-item-button v-on:click="deletePost">Delete</b-dropdown-item-button>
+          </b-dropdown>
+        </div>
+        <router-link :to="{name: 'UserPage', params: {id: post.user.id}}" id="link"><h5 class="name">{{post.user.username}}</h5></router-link>
+        <p class="text-format">{{post.content}}</p>
       </div>
-      <div id="add-comment">
-        <b-form-input placeholder="Write a new comment..." v-model="commentText"></b-form-input>
-        <b-button size="sm" v-on:click="saveComment">Comment</b-button>
-      </div>
-      <b-alert :show="showAlert" dismissible v-on:dismissed="showAlert = false" variant="danger">The comment must not be empty!</b-alert>
+        <b-form id="add-comment" v-on:submit="saveComment">
+          <b-form-input placeholder="Write a new comment..." v-model="commentText" class="no-background" required></b-form-input>
+          <b-button size="sm" type="submit">Comment</b-button>
+        </b-form>
         <div v-for="comment in this.comments.slice(0, displayComments)" v-bind:key="comment.id">
           <div id="comment">
-            <b-dropdown class="dropdown" size="sm" text="" variant="none" no-caret>
-              <template #button-content>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
-                  <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
-                </svg>
-            </template>
-              <b-dropdown-item-button>Delete</b-dropdown-item-button>
-              <b-dropdown-item-button>Edit</b-dropdown-item-button>
-            </b-dropdown>
+            <div v-if="isOwnComment(comment.user.id)">
+              <b-dropdown class="dropdown no-background" size="sm" text="" variant="none" no-caret>
+                <template #button-content>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+                    <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+                  </svg>
+                </template>
+                <b-dropdown-item-button v-on:click="deleteComment(comment.id)">Delete</b-dropdown-item-button>
+              </b-dropdown>
+            </div>
             <h6 class="name">{{comment.user.username}}</h6>
             <p class="text-format">{{comment.content}}</p>
           </div>
         </div>
-        <div v-if="displayComments < this.numberOfComments">
-          <button class="text-button" v-on:click="displayComments += 2">Show more comments</button>
-          <button class="text-button" v-on:click="displayComments = numberOfComments">Show all comments ({{this.numberOfComments}})</button>
-        </div>
+      <div v-if="displayComments < this.numberOfComments">
+        <button class="no-background" v-on:click="displayComments += 2">Show more comments</button>
+        <button class="no-background" v-on:click="displayComments = numberOfComments">Show all comments ({{this.numberOfComments}})</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import PostService from "../services/post-service";
+import CommentService from "../services/comment-service";
 
 export default {
   name: "Post",
@@ -51,36 +53,48 @@ export default {
     return {
       displayComments: 1,
       commentText:'',
-      showAlert: false,
       comments: [],
       numberOfComments: ''
     }
   },
   props: {
     post: {
-      id: '',
-      content: '',
-      user: ''
-    }
+      type: Object,
+      required: true
+    },
+
   },
   mounted() {
     this.getComments()
   },
   methods: {
+  getComments () {
+    PostService.getComments(this.post.id).then(response =>{
+      this.comments = response.data.comments
+      this.numberOfComments = response.data.numberOfComments
+    })
+  },
     saveComment () {
-      if (this.commentText.length === 0) {
-        this.showAlert = true
-      }
-      else {
-        alert('comment saved')
-        this.showAlert = false
-      }
+      CommentService.saveComment(this.commentText, this.$store.state.userId , this.post.id).then(
+            this.getComments()
+      )
+      this.commentText = ''
     },
-    getComments () {
-      PostService.getComments(this.post.id).then(response =>{
-        this.comments = response.data.comments
-        this.numberOfComments = response.data.numberOfComments
-      })
+    deleteComment (commentId) {
+      CommentService.deleteComment(commentId).then(
+          this.getComments()
+      )
+    },
+    deletePost () {
+      PostService.deletePost(this.post.id).then(
+          window.location.reload()
+      )
+    },
+    isOwnPost () {
+      return this.$store.state.userId === this.post.user.id
+    },
+    isOwnComment (id) {
+      return this.$store.state.userId === id
     }
   }
 }
@@ -102,10 +116,9 @@ export default {
     background-color: #dedede;
   }
 
-  .text-button {
+  .no-background {
     border: none;
     background: none;
-    color: #888;
   }
 
   .name {
@@ -127,12 +140,10 @@ export default {
 
   .dropdown {
     float: right;
-    background: none;
-    border: none;
   }
 
-  .text-format {
+  #link {
+    color: black;
   }
 
 </style>
-
