@@ -3,6 +3,7 @@ package com.ASD.twitty.Entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -21,8 +22,7 @@ public class User {
     private String username;
 
     @JsonIgnore
-    @NotNull
-    @Column(name="password")
+ll  @Column(name="password")
     private String password;
 
     @Column(name="active")
@@ -96,7 +96,7 @@ public class User {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.active=active;
+        this.active=true;
     }
 
     public User() {
