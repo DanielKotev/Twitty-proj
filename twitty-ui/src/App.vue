@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-
     <nav class="navbar navbar-expand-lg navbar-light bg-light" >
       <div class="container-fluid">
         <a class="navbar-brand" href="/">Twitty </a>
@@ -24,21 +23,27 @@
         </div>
       </div>
     </nav>
-    <router-view/>
+    <div id="nav">
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link> |
+      <router-link to="/HomePage">Home Page</router-link>
+    </div>
+    <router-view :key="$route.fullPath"/>
   </div>
 </template>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /*-moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #2c3e50;*/
+  background-color: #fff;
 }
 
 #nav {
-  padding: 30px;
+  padding: 10px;
 }
 
 #nav a {
@@ -49,4 +54,5 @@
 #nav a.router-link-exact-active {
   color: #42b983;
 }
+
 </style>
