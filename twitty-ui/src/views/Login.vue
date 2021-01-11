@@ -8,7 +8,7 @@
           class="profile-img-card"
       />
       <h6>Sign in to Twitty</h6>
-      <form name="form" @submit.prevent="handleLogin">
+      <form name="form" @submit.prevent="login">
         <div class="form-group">
           <label for="user.username">Username</label>
           <input
@@ -18,11 +18,11 @@
               class="form-control"
               name="username"
           />
-          <div
+          <dit
               v-if="errors.has('username')"
               class="alert alert-danger"
               role="alert"
-          >Username is required!</div>
+          >Username is required!</dit>
         </div>
         <div class="form-group">
           <label for="user.password">Password</label>
@@ -54,15 +54,18 @@
 </template>
 
 <script>
-
-
-import User from '../models/user.js'
+// import User from '../models/user.js'
+import UserServices from '@/services/user-services'
 
 export default {
   name: 'Login',
   data() {
     return {
-      user:new User ('',''),
+      //user:new User ('',''),
+      user: {
+        username: '',
+        password: ''
+      },
       loading: false,
       message: ''
     };
@@ -73,39 +76,46 @@ export default {
     }
   },
   created() {
-    if (this.loggedIn) {
-      this.$router.push('/profile');
-    }
+    this.$store.state.userId = null
+    // if (this.loggedIn) {
+    //   this.$router.push('HomePage')
+    // }
   },
   methods: {
-    handleLogin() {
-      this.loading = true;
-      this.$validator.validateAll().then(isValid => {
-        if (!isValid) {
-          this.loading = false;
-          return;
-        }
-        if (this.user.username && this.user.password) {
-          this.$store.dispatch('auth/login', this.user).then(
-              () => {
-                this.$router.push('/profile');
-              },
-              error => {
-                this.loading = false;
-                this.message =
-                    (error.response && error.response.data && error.response.data.message) ||
-                    error.message ||
-                    error.toString();
-              }
-          );
+    login () {
+      UserServices.login(this.user.username, this.user.password).then(response => {
+        if (response.data)
+        {
+          this.$store.commit('login', response.data.id)
+          this.$router.push('HomePage')
         }
       })
     }
+    // handleLogin() {
+    //   this.loading = true;
+    //   this.$validator.validateAll().then(isValid => {
+    //     if (!isValid) {
+    //       this.loading = false;
+    //       return;
+    //     }
+    //     if (this.user.username && this.user.password) {
+    //       this.$store.dispatch('auth/login', this.user).then(
+    //           () => {
+    //             this.$router.push('/profile');
+    //           },
+    //           error => {
+    //             this.loading = false;
+    //             this.message =
+    //                 (error.response && error.response.data && error.response.data.message) ||
+    //                 error.message ||
+    //                 error.toString();
+    //           }
+    //       );
+    //     }
+    //   })
+    // }
   }
 }
-
-
-
 </script>
 
 <style scoped>

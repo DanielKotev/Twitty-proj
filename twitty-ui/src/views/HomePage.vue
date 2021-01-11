@@ -32,13 +32,19 @@ export default {
     }
   },
   mounted () {
+    if (!this.$store.state.userId)
+    {
+      this.$router.push('Login')
+    }
     this.getNextPageOfPosts()
     this.scroll()
   },
   methods: {
     getNextPageOfPosts () {
       UserServices.getPostsOfFollowed(this.$store.state.userId, this.currentPage++, this.perPage).then(response => {
-        this.posts.push(...response.data.posts)
+        if (response.data.posts) {
+            this.posts.push(...response.data.posts)
+        }
         this.totalPages = response.data.totalPages
       })
     },

@@ -46,6 +46,10 @@ export default {
     }
   },
   mounted() {
+    if (!this.$store.state.userId)
+    {
+      this.$router.push('Login')
+    }
     this.init(this.$route.params.id)
     this.scroll()
   },

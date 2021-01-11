@@ -1,8 +1,18 @@
 import axios from 'axios'
 
 const API_URL = 'http://localhost:8080/user'
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
 
 class UserServices {
+    login (username, password) {
+        return axios.get(API_URL + '/login',
+            {
+                params: {
+                    userName: username,
+                    password: password
+                }
+            })
+    }
     saveUser (form) {
         return axios.post(API_URL + '/save',
             {

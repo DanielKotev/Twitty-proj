@@ -16,15 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
-
 @RestController
-
 @RequestMapping("/user")
 public class UserController {
     @Autowired
     UserRepository userRepository;
-
-
 
     @GetMapping("/all")
     public List<User> getActiveUsers()
@@ -41,6 +37,12 @@ public class UserController {
     }
 
     public Optional<User> CheckUserName(@RequestParam String userName){ return userRepository.findUserByUsername(userName); }
+
+    @GetMapping("/login")
+    public Optional<User> LoginCheck(@RequestParam String userName,
+                                     @RequestParam String password) {
+        return userRepository.LoginCheckAuth(userName, password);
+    }
 
     @PostMapping("/save")
     public ResponseEntity<?> saveOrUpdate(@RequestBody UserRequest form)
