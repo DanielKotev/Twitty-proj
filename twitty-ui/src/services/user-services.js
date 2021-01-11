@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const API_URL = 'http://localhost:8080/user'
 
-class UserService {
+class UserServices {
     getUserById (id) {
         return axios.get(API_URL +'/getById', { params:{id: id}})
     }
@@ -55,4 +55,4 @@ class UserService {
     }
 }
 
-export default new UserService()
+export default new UserServices()

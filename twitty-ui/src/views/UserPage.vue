@@ -1,38 +1,33 @@
 <template>
   <div id="page-content">
-    <div v-if="user">
-      <div id="user-card">
-        <h3 class="center">{{user.username}}</h3>
-        <div class="center" v-if="!ownPage()">
-          <div v-if="followed">
-            <b-button variant="danger" v-on:click="unfollow">Unfollow</b-button>
-          </div>
-          <div v-else>
-            <b-button variant="success" v-on:click="follow">Follow</b-button>
-          </div>
+    <div id="user-card">
+      <h3 class="center">{{user.username}}</h3>
+      <div class="center" v-if="!ownPage()">
+        <div v-if="followed">
+          <b-button variant="danger" v-on:click="unfollow">Unfollow</b-button>
+        </div>
+        <div v-else>
+          <b-button variant="success" v-on:click="follow">Follow</b-button>
         </div>
       </div>
-      <div v-if="ownPage()">
-        <create-post/>
-      </div>
-      <div v-if="this.posts.length != 0">
-        <div class="posts" v-for="post in posts" v-bind:key="post.id">
-          <post v-bind:post="post"/>
-        </div>
-      </div>
-      <div v-else>
-        <h5>No posts found</h5>
+    </div>
+    <div v-if="ownPage()">
+      <create-post/>
+    </div>
+    <div v-if="this.posts.length != 0">
+      <div class="posts" v-for="post in posts" v-bind:key="post.id">
+        <post v-bind:post="post" v-on:deleted="removePost"/>
       </div>
     </div>
     <div v-else>
-      <h2>No user was passed</h2>
+      <h5>No posts found</h5>
     </div>
   </div>
 </template>
 
 <script>
 import Post from "../components/Post";
-import UserService from '../services/user-service'
+import UserServices from '../services/user-services'
 import CreatePost from "../components/CreatePost";
 
 export default {
@@ -51,55 +46,57 @@ export default {
     }
   },
   mounted() {
+    this.init(this.$route.params.id)
     this.scroll()
   },
-  beforeRouteEnter (to, from, next) {
-    if (to.params) {
-      UserService.getUserById(to.params.id).then(
-          response => next(vm => {
-                vm.setUser(response.data)
-                if (vm.user) {
-                  vm.isFollowing()
-                  vm.getNextPageOfPosts()
-                }
-              }
-          )
-      )
-    }
-  },
+  // beforeRouteEnter (to, from, next) {
+  //   if (to.params) {
+  //     UserServices.getUserById(to.params.id).then(
+  //         response => next(vm => {
+  //               vm.setUser(response.data)
+  //               if (vm.user) {
+  //                 vm.isFollowing()
+  //                 vm.getNextPageOfPosts()
+  //               }
+  //             }
+  //         )
+  //     )
+  //   }
+  // },
   methods: {
     isFollowing () {
-      UserService.isFollowing(this.$store.state.userId, this.user.id).then(
+      UserServices.isFollowing(this.$store.state.userId, this.user.id).then(
           response => {
             this.followed = response.data.isFollowing
           }
       )
     },
     follow () {
-      UserService.follow(this.$store.state.userId, this.user.id).then(
+      UserServices.follow(this.$store.state.userId, this.user.id).then(
           this.followed = true
       )
     },
     unfollow () {
-      UserService.unfollow(this.$store.state.userId, this.user.id).then(
+      UserServices.unfollow(this.$store.state.userId, this.user.id).then(
           this.followed = false
       )
     },
     ownPage () {
       return this.user.id === this.$store.state.userId
     },
-    setUser (user) {
-      this.user = user;
-    },
-    getUser (id) {
-      UserService.getUserById(id).then(
-          response => {
-            this.user = response.data
+    init (id) {
+      UserServices.getUserById(id).then(response => {
+            this.user = response.data;
+            this.isFollowing()
+            this.getNextPageOfPosts()
           }
       )
     },
+    // setUser (user) {
+    //   this.user = user
+    // },
     getNextPageOfPosts () {
-      UserService.getPostsOfUser(this.user.id, this.currentPage++, this.perPage).then(response => {
+      UserServices.getPostsOfUser(this.user.id, this.currentPage++, this.perPage).then(response => {
         this.posts.push(...response.data.posts)
         this.totalPages = response.data.totalPages
       })
@@ -112,6 +109,9 @@ export default {
           this.getNextPageOfPosts()
         }
       }
+    },
+    removePost(id) {
+      this.posts = this.posts.filter(p => p.id != id)
     }
   }
 }

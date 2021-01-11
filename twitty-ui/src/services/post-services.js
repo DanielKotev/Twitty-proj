@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const API_URL = 'http://localhost:8080/post'
 
-class PostService {
+class PostServices {
     getComments(id) {
         return axios.get(API_URL + '/comments',
             {
@@ -29,4 +29,4 @@ class PostService {
     }
 }
 
-export default new PostService()
+export default new PostServices()

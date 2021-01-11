@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import PostService from "../services/post-service";
+import PostServices from "../services/post-services";
 
 export default {
   name: "CreatePost",
@@ -19,8 +19,8 @@ export default {
   },
   methods: {
     savePost () {
-      PostService.savePost(this.text, this.$store.state.userId).then(
-          window.location.reload()
+      PostServices.savePost(this.text, this.$store.state.userId).then(
+          () => window.location.reload()
       )
       this.text = ''
     }

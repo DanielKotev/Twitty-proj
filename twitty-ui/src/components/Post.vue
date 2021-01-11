@@ -12,8 +12,8 @@
             <b-dropdown-item-button v-on:click="deletePost">Delete</b-dropdown-item-button>
           </b-dropdown>
         </div>
-        <router-link :to="{name: 'UserPage', params: {id: post.user.id}}" id="link"><h5 class="name">{{post.user.username}}</h5></router-link>
-        <p class="text-format">{{post.content}}</p>
+        <router-link :to="{name: 'UserPage', params: {id: post.user.id}}" class="name" tag="h5">{{post.user.username}}</router-link>
+        <pre class="text-format">{{post.content}}</pre>
       </div>
         <b-form id="add-comment" v-on:submit="saveComment">
           <b-form-input placeholder="Write a new comment..." v-model="commentText" class="no-background" required></b-form-input>
@@ -31,7 +31,7 @@
                 <b-dropdown-item-button v-on:click="deleteComment(comment.id)">Delete</b-dropdown-item-button>
               </b-dropdown>
             </div>
-            <h6 class="name">{{comment.user.username}}</h6>
+            <router-link :to="{name: 'UserPage', params: {id: comment.user.id}}" class="name" tag="h6">{{comment.user.username}}</router-link>
             <p class="text-format">{{comment.content}}</p>
           </div>
         </div>
@@ -44,8 +44,8 @@
 </template>
 
 <script>
-import PostService from "../services/post-service";
-import CommentService from "../services/comment-service";
+import PostServices from "../services/post-services";
+import CommentServices from "../services/comment-services";
 
 export default {
   name: "Post",
@@ -53,7 +53,7 @@ export default {
     return {
       displayComments: 1,
       commentText:'',
-      comments: [],
+      comments: '',
       numberOfComments: ''
     }
   },
@@ -69,25 +69,31 @@ export default {
   },
   methods: {
   getComments () {
-    PostService.getComments(this.post.id).then(response =>{
+    PostServices.getComments(this.post.id).then(response =>{
       this.comments = response.data.comments
       this.numberOfComments = response.data.numberOfComments
     })
   },
     saveComment () {
-      CommentService.saveComment(this.commentText, this.$store.state.userId , this.post.id).then(
+      CommentServices.saveComment(this.commentText, this.$store.state.userId , this.post.id).then(
+          () => {
             this.getComments()
+            this.$forceUpdate()
+          }
       )
       this.commentText = ''
     },
     deleteComment (commentId) {
-      CommentService.deleteComment(commentId).then(
-          this.getComments()
+      CommentServices.deleteComment(commentId).then(
+          () => {
+            this.getComments()
+            this.$forceUpdate()
+          }
       )
     },
     deletePost () {
-      PostService.deletePost(this.post.id).then(
-          window.location.reload()
+      PostServices.deletePost(this.post.id).then(
+          this.$emit('deleted')
       )
     },
     isOwnPost () {

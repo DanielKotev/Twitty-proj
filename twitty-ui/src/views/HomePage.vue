@@ -3,7 +3,7 @@
     <create-post/>
     <div v-if="this.posts.length != 0">
       <div class="posts" v-for="post in posts" v-bind:key="post.id">
-        <post v-bind:post="post"/>
+        <post v-bind:post="post" v-on:deleted="updatePage"/>
       </div>
     </div>
     <div v-else>
@@ -15,7 +15,7 @@
 <script>
 import Post from "../components/Post";
 import CreatePost from "../components/CreatePost";
-import UserService from "../services/user-service";
+import UserServices from "../services/user-services";
 
 export default {
   name: "HomePage",
@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     getNextPageOfPosts () {
-      UserService.getPostsOfFollowed(this.$store.state.userId, this.currentPage++, this.perPage).then(response => {
+      UserServices.getPostsOfFollowed(this.$store.state.userId, this.currentPage++, this.perPage).then(response => {
         this.posts.push(...response.data.posts)
         this.totalPages = response.data.totalPages
       })
@@ -50,6 +50,9 @@ export default {
           this.getNextPageOfPosts()
         }
       }
+    },
+    updatePage() {
+      this.$forceUpdate()
     }
   }
 }

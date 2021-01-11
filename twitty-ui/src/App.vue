@@ -5,7 +5,7 @@
       <router-link to="/about">About</router-link> |
       <router-link to="/HomePage">Home Page</router-link>
     </div>
-    <router-view/>
+    <router-view :key="$route.fullPath"/>
   </div>
 </template>
 

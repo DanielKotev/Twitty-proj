@@ -2,7 +2,7 @@ import axios from "axios"
 
 const API_URL = 'http://localhost:8080/comment'
 
-class CommentService {
+class CommentServices {
     saveComment(content, userId, postId, commentId = null) {
         return axios.post(API_URL + '/save', {
             id: commentId,
@@ -20,4 +20,4 @@ class CommentService {
     }
 }
 
-export default new CommentService()
+export default new CommentServices()
