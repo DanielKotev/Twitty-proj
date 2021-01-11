@@ -24,6 +24,7 @@ const routes = [
     name: 'Register',
     component: Register
   },
+  {
     path: '/HomePage',
     name: 'HomePage',
     component: HomePage

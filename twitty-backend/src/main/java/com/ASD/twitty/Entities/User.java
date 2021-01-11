@@ -22,7 +22,7 @@ public class User {
     private String username;
 
     @JsonIgnore
-ll  @Column(name="password")
+    @Column(name="password")
     private String password;
 
     @Column(name="active")
@@ -35,6 +35,7 @@ ll  @Column(name="password")
         inverseJoinColumns = @JoinColumn(name = "followed"))
     private Set<User> following = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy="user")
     private Set<Post> posts = new HashSet<>();
 

@@ -52,7 +52,7 @@ export default {
       }
     },
     updatePage() {
-      this.$forceUpdate()
+      () => this.$forceUpdate()
     }
   }
 }
