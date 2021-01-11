@@ -1,5 +1,6 @@
 package com.ASD.twitty.Controllers;
 
+import com.ASD.twitty.Beans.UserRequest;
 import com.ASD.twitty.Entities.Comment;
 import com.ASD.twitty.Entities.Post;
 import com.ASD.twitty.Entities.User;
@@ -12,11 +13,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
+
 @RestController
+
 @RequestMapping("/user")
 public class UserController {
     @Autowired
     UserRepository userRepository;
+
+
 
     @GetMapping("/all")
     public List<User> getActiveUsers()
@@ -27,16 +32,14 @@ public class UserController {
     public Optional<User> CheckUserName(@RequestParam String userName){ return userRepository.findUserByUsername(userName); }
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveOrUpdate(@RequestParam(required = false) Long id,
-                                          @RequestParam() String username,
-                                          @RequestParam() String password)
+    public ResponseEntity<?> saveOrUpdate(@RequestBody UserRequest form)
     {
-        if(CheckUserName(username).isPresent()) {
+        if(CheckUserName(form.getUsername()).isPresent()) {
             return ResponseEntity.ok().body("Username is taken ");
         }
        else{
             Map<String, Object> response = new HashMap<>();
-            User users = new User(id, username, password,true);
+            User users = new User(form.getId(), form.getUsername(), form.getPassword(),true);
             User user = userRepository.save(users);
 
             response.put("generatedId", user.getId());
@@ -45,6 +48,7 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
     }
+
 
     @PostMapping("/deactivateUser")
     public ResponseEntity<?> deactivateUser(@RequestParam() String username)

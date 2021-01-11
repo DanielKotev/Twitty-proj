@@ -2,6 +2,7 @@ package com.ASD.twitty.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -20,7 +21,6 @@ public class User {
     private String username;
 
     @JsonIgnore
-    @NonNull
     @Column(name="password")
     private String password;
 

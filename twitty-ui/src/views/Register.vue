@@ -1,64 +1,76 @@
 <template>
-  <div class="container">
 
-    <h1>Register To Twitty</h1>
-    <br>
-    <br>
-    <div class="row" >
-      <div class="col-md-3"></div>
-      <div class="col-md-6"><form>
-        <div class="form-group">
-          <input type="component"
-                 class="form-control"
-                 required
-                 id="UserName" v-model="username"
-                 placeholder="Enter Nickname">
-        </div>
-        <br>
-        <div class="form-group">
-          <input type="password"
-                 class="form-control"
-                 id="password" v-model="password"
-                 required
-                 placeholder="Password" />
-<!--          <div v-if="user.password.length >7 &&user.password.length<13" class="text-danger">Password too short</div>-->
-<!--          <div id="passwordverification" class="form-text">Enter Password Between 8-12 Digits</div>-->
-        </div>
-<!--        <div class="form-group">-->
-<!--          <input type="password"-->
-<!--                 class="form-control"-->
-<!--                 id="reenterpassword" v-model="reenterpassword"-->
-<!--                 placeholder="Re-enter Password">-->
-<!--          <div v-if="user.password != user.reenterpassword" class="text-danger">Password don't match</div>-->
-<!--        </div>-->
-        <br>
-        <b-button v-on:click="SaveUser" variant="success" style="margin: 5px">Register</b-button>
-      </form>
-      </div>
-      <div class="col-md-3"></div>
+  <div class="row" >
+
+
+    <div class="col-md-4"></div>
+    <div class="col-md-3">
+      <br>
+      <h1> Sign up to Twitty</h1>
+      <br>
+
+    <b-form @submit="onSubmit">
+      <b-form-group
+          id="input-group-1"
+          label-for="input-1">
+
+        <b-form-input
+            id="input"
+            v-model="user.username"
+            type="text"
+            placeholder="Enter email"
+            required
+        ></b-form-input>
+      </b-form-group>
+
+      <b-form-group id="input-group-2"  label-for="input-2">
+        <b-form-input
+            id="input-2"
+            type="password"
+            v-model="user.password"
+            placeholder="Password"
+            required
+        ></b-form-input>
+      </b-form-group>
+
+
+      <b-button type="submit" v-on:click="newUser" variant="success">Submit</b-button>
+    </b-form>
+      <div class="col-md-4"></div>
     </div>
   </div>
+
 </template>
+
+
 <script>
+
+
 
 import UserServices from '../services/user-services'
 export default {
   name: 'Register',
   data() {
     return {
-
+      user: {
         username: '',
         password: '',
+        show:true
+      }
 
     }
   },
   methods: {
-    SaveUser() {
-      UserServices.saveUser(this.username,this.password).then(
-          response =>{
+    newUser() {
+      UserServices.saveUser(this.user).then(
+          response => {
             console.log(response.data)
           }
       )
+    },
+    onSubmit(event) {
+      event.preventDefault()
+      alert(JSON.stringify(this.form))
     }
   }
 }
