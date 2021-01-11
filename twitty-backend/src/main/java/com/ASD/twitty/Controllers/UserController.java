@@ -5,6 +5,9 @@ import com.ASD.twitty.Entities.Post;
 import com.ASD.twitty.Entities.User;
 import com.ASD.twitty.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,14 @@ public class UserController {
         return userRepository.findAll();
     }
 
+    @GetMapping("getById")
+    public Optional<User> getUserById(@RequestParam(required = false) Long id) {
+        if (id == null) {
+            return null;
+        }
+        return userRepository.findById(id);
+    }
+
     public Optional<User> CheckUserName(@RequestParam String userName){ return userRepository.findUserByUsername(userName); }
 
     @PostMapping("/save")
@@ -40,7 +51,7 @@ public class UserController {
             User user = userRepository.save(users);
 
             response.put("generatedId", user.getId());
-                response.put("message", "Успешно добавен");
+            response.put("message", "Успешно добавен");
 
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
@@ -66,27 +77,48 @@ public class UserController {
 
     }
 
+    @GetMapping("/followedPosts")
+    public ResponseEntity<?> getPostsOfFollowedUsers(@RequestParam(defaultValue = "1") int currentPage,
+                                                         @RequestParam(defaultValue = "5") int perPage,
+                                                         @RequestParam Long id) {
 
-    @GetMapping("/commentsPost")
-    public ResponseEntity<?> getCommentsOfPosts(@RequestParam Long id) {
+        Pageable pageable = PageRequest.of(currentPage - 1, perPage);
+        Page<Post> result = userRepository.fingPostsOfFollowedUsers(pageable, id);
 
-        Set<Comment> result = userRepository.findCommentsOfPosts(id);
+        Map<String, Object> response = new HashMap<>();
 
-        return !result.isEmpty() ?
-                ResponseEntity.ok().body(result) :
-                ResponseEntity.ok().body("No Comments Found");
+        if (result.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
 
+        response.put("posts", result.getContent());
+        response.put("currentPage", result.getNumber());
+        response.put("totalElements", result.getTotalElements());
+        response.put("totalPages", result.getTotalPages());
+
+        return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping("/followedPosts")
-    public ResponseEntity<?> getPostsOfFollowedUsers(@RequestParam Long id) {
+    @GetMapping("/posts")
+    public ResponseEntity<?> ownPosts(@RequestParam(defaultValue = "1") int currentPage,
+                                                     @RequestParam(defaultValue = "5") int perPage,
+                                                     @RequestParam Long id) {
 
-        Set<Post> result = userRepository.fingPostsOfFollowedUsers(id);
+        Pageable pageable = PageRequest.of(currentPage - 1, perPage);
+        Page<Post> result = userRepository.fingPostsOfUser(pageable, id);
 
-        return !result.isEmpty() ?
-                ResponseEntity.ok().body(result) :
-                ResponseEntity.ok().body("No posts found");
+        Map<String, Object> response = new HashMap<>();
 
+        if (result.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        response.put("posts", result.getContent());
+        response.put("currentPage", result.getNumber());
+        response.put("totalElements", result.getTotalElements());
+        response.put("totalPages", result.getTotalPages());
+
+        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping("/follow")
@@ -117,5 +149,16 @@ public class UserController {
         follower.get().getFollowing().remove(followed.get());
         userRepository.save(follower.get());
         return ResponseEntity.ok().body("User successfuly unfollowed!");
+    }
+
+    @GetMapping("/isFollowing")
+    public ResponseEntity<?> isFollowing(@RequestParam Long followerId, @RequestParam Long followedId) {
+
+        Boolean isFollowing = !userRepository.isFollowing(followerId, followedId).isEmpty();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("isFollowing", isFollowing);
+
+        return ResponseEntity.ok().body(response);
     }
 }

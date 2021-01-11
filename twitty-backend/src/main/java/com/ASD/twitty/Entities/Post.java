@@ -17,11 +17,11 @@ public class Post {
     @Column(name = "content")
     private String content;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="user_id")
     private User user;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "post")
     Set<Comment> comments = new HashSet<>();
 
