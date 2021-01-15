@@ -12,6 +12,17 @@ class PostServices {
                     }
             })
     }
+    getPosts(filter, currentPage, perPage){
+        return axios.get(API_URL + '/getByContent',
+            {
+                params:
+                    {
+                        content: filter.content,
+                        currentPage: currentPage,
+                        perPage:perPage
+                    }
+            })
+    }
     savePost(content, userId, id = null) {
         return axios.post(API_URL + "/save",
             {
