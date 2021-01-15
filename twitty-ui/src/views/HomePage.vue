@@ -5,7 +5,7 @@
       <div class="searchBox">
         <input class="search-txt" type="text" v-model="filter.content" placeholder="search posts"/>
           <a class="search-btn">
-            <svg viewBox="0 0 24 24" height="70px" v-on:click="searchPosts, updatePage">
+            <svg viewBox="0 0 24 24" height="70px" v-on:click="searchPosts">
               <g class="search-btn">
               <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91
                3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6
@@ -55,7 +55,7 @@ export default {
   mounted () {
     if (!this.$store.state.userId)
     {
-      this.$router.push('Login')
+        this.$router.push({name: 'Login'})
     }
     this.getNextPageOfPosts()
     this.scroll()
@@ -70,7 +70,7 @@ export default {
       })
     },
     searchPosts (){
-      PostServices.getPosts(this.filter).then(
+      PostServices.getPosts(this.filter,this.currentPage,this.perPage).then(
           response =>{
             this.posts = response.data.posts
           }
@@ -86,8 +86,8 @@ export default {
         }
       }
     },
-    updatePage() {
-      () => this.$forceUpdate()
+    updatePage(id) {
+      this.posts= this.posts.filter(p => p.id != id)
     }
     // computed: {
     //   searchPosts: function (){
@@ -138,12 +138,12 @@ export default {
   transition:0.4s;
 }
 .searchBox:hover>.search-txt{
-  width: 500px;
+  width: 240px;
   padding: 0 6px;
 }
 .searchBox:hover {
   background: #2f3640;
-  width: 560px;
+  width: 300px;
   padding: 0 6px;
 }
 .searchBox:hover>.search-btn{

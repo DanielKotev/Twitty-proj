@@ -93,7 +93,7 @@ export default {
     },
     deletePost () {
       PostServices.deletePost(this.post.id).then(
-          this.$emit('deleted')
+          this.$emit('deleted', this.post.id)
       )
     },
     isOwnPost () {

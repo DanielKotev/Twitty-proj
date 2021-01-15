@@ -4,6 +4,7 @@ import Register from '@/views/Register'
 import Login from '@/views/Login'
 import HomePage from '../views/HomePage.vue'
 import UserPage from '../views/UserPage.vue'
+import FindUsers from "@/views/FindUsers"
 
 Vue.use(VueRouter)
 
@@ -19,7 +20,7 @@ const routes = [
     component: Register
   },
   {
-    path: '/HomePage',
+    path: '/',
     name: 'HomePage',
     component: HomePage
   },
@@ -27,7 +28,13 @@ const routes = [
     path: '/UserPage/:id',
     name: 'UserPage',
     component: UserPage
+  },
+  {
+    path: '/FindUsers/:search',
+    name: 'FindUsers',
+    component: FindUsers
   }
+
 ]
 
 const router = new VueRouter({

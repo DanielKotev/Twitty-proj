@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +62,30 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
     }
+
+@GetMapping("/findFriendByName")
+public ResponseEntity<?>paginateFriends(@RequestParam String name,
+                                        @RequestParam (value="currentPage",defaultValue = "1")int currentPage,
+                                        @RequestParam(value = "perPage",defaultValue = "5")int perPage){
+
+             Pageable pageable = PageRequest.of(currentPage - 1, perPage);
+             Page<User> friends = userRepository.findFriends(pageable, name);
+
+        if(friends.isEmpty())
+        {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        Map<String,Object> response = new HashMap<>();
+
+        response.put("friends", friends.getContent());
+        response.put("currentPage", friends.getNumber());
+        response.put("total", friends.getTotalPages());
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
+
+}
+
 
 
     @PostMapping("/deactivateUser")

@@ -87,7 +87,7 @@ export default {
         if (response.data)
         {
           this.$store.commit('login', response.data.id)
-          this.$router.push('HomePage')
+          this.$router.push({name: 'HomePage'})
         }
       })
     }

@@ -30,6 +30,7 @@ import Post from "../components/Post";
 import UserServices from '../services/user-services'
 import CreatePost from "../components/CreatePost";
 
+
 export default {
   name: "UserPage",
   components: {
@@ -48,7 +49,7 @@ export default {
   mounted() {
     if (!this.$store.state.userId)
     {
-      this.$router.push('Login')
+      this.$router.push({name: 'Login'})
     }
     this.init(this.$route.params.id)
     this.scroll()

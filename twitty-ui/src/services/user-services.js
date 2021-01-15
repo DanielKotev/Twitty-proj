@@ -13,6 +13,18 @@ class UserServices {
                 }
             })
     }
+    getFriendByName(name, currentPage, perPage){
+        return axios.get(API_URL + '/findFriendByName',
+            {
+                params:
+                    {
+                        name: name,
+                        currentPage: currentPage,
+                        perPage:perPage
+                    }
+            })
+    }
+
     saveUser (form) {
         return axios.post(API_URL + '/save',
             {
@@ -20,9 +32,11 @@ class UserServices {
                password: form.password
             })
     }
+
     getUserById (id) {
         return axios.get(API_URL +'/getById', { params:{id: id}})
     }
+
     getPostsOfFollowed(id, currentPage, perPage) {
         return axios.get(API_URL + '/followedPosts',
             {
@@ -34,6 +48,7 @@ class UserServices {
                     }
             })
     }
+
     getPostsOfUser(id, currentPage, perPage) {
         return axios.get(API_URL + '/posts',
             {

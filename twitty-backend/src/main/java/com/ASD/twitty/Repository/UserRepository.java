@@ -16,6 +16,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u from User u Where u.username=:username")
      Optional<User> findUserByUsername(String username);
 
+    @Query("Select u FROM User u WHERE LOWER(u.username) LIKE" +
+            ":#{#name==null || #name.isEmpty() ? '%' : '%' + #name + '%'}")
+    Page<User>findFriends(Pageable pageable ,String name);
+
     @Query("SELECT u from User u Where u.username=:username AND u.password=:password")
     Optional<User> LoginCheckAuth(String username, String password);
 
