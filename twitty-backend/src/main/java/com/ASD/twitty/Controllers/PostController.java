@@ -7,14 +7,14 @@ import com.ASD.twitty.Entities.User;
 import com.ASD.twitty.Repository.PostRepository;
 import com.ASD.twitty.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -28,6 +28,28 @@ public class PostController {
 
     @GetMapping("/all")
     public List<Post> getPosts(){ return postRepository.findAll(); }
+
+    @GetMapping("/getByContent")
+    public ResponseEntity<?> getPostsByContent(@RequestParam(defaultValue = "1") int currentPage,
+                                                     @RequestParam(defaultValue = "5") int perPage,
+                                                     @RequestParam String content) {
+
+        Pageable pageable = PageRequest.of(currentPage - 1, perPage);
+        Page<Post> posts = postRepository.findPostByName(pageable, content);
+
+        Map<String, Object> response = new HashMap<>();
+
+        if (posts.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        response.put("posts", posts.getContent());
+        response.put("currentPage", posts.getNumber());
+        response.put("totalElements", posts.getTotalElements());
+        response.put("totalPages", posts.getTotalPages());
+
+        return ResponseEntity.ok().body(response);
+    }
 
     @PostMapping("/save")
     public ResponseEntity<?> saveOrEdit(@RequestBody PostRequest form)
