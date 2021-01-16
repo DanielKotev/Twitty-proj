@@ -4,7 +4,7 @@
     <div class="card card-container">
       <img
           id="profile-img"
-          src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+          src="https://toppng.com/uploads/preview/tweety-11549958656sbbblkuahg.png"
           class="profile-img-card"
       />
       <h6>Sign in to Twitty</h6>
@@ -18,11 +18,11 @@
               class="form-control"
               name="username"
           />
-          <dit
+          <div
               v-if="errors.has('username')"
               class="alert alert-danger"
               role="alert"
-          >Username is required!</dit>
+          >Username is required!</div>
         </div>
         <div class="form-group">
           <label for="user.password">Password</label>
