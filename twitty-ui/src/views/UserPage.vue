@@ -19,6 +19,9 @@
         <post v-bind:post="post" v-on:deleted="updatePage"/>
       </div>
     </div>
+    <div v-else>
+    <h5>No posts found</h5>
+  </div>
   </div>
 </template>
 
