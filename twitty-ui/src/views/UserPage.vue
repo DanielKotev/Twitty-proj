@@ -12,15 +12,12 @@
       </div>
     </div>
     <div v-if="ownPage()">
-      <create-post/>
+      <create-post v-on:posted="updatePage"/>
     </div>
     <div v-if="this.posts.length != 0">
       <div class="posts" v-for="post in posts" v-bind:key="post.id">
-        <post v-bind:post="post" v-on:deleted="removePost"/>
+        <post v-bind:post="post" v-on:deleted="updatePage"/>
       </div>
-    </div>
-    <div v-else>
-      <h5>No posts found</h5>
     </div>
   </div>
 </template>
@@ -102,8 +99,10 @@ export default {
     // },
     getNextPageOfPosts () {
       UserServices.getPostsOfUser(this.user.id, this.currentPage++, this.perPage).then(response => {
-        this.posts.push(...response.data.posts)
-        this.totalPages = response.data.totalPages
+        if (response.data.posts) {
+          this.posts.push(...response.data.posts)
+          this.totalPages = response.data.totalPages
+        }
       })
     },
     scroll () {
@@ -115,8 +114,10 @@ export default {
         }
       }
     },
-    removePost(id) {
-      this.posts = this.posts.filter(p => p.id != id)
+    updatePage() {
+      this.posts = []
+      this.currentPage = 1
+      this.getNextPageOfPosts()
     }
   }
 }

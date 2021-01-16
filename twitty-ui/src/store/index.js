@@ -12,11 +12,9 @@ export default new Vuex.Store({
   mutations: {
     login(state,id) {
       state.userId = id
-      console.log('id set to ' + id)
     },
     logout(state) {
       state.userId = null
-      console.log('logged out')
     }
   },
   actions: {

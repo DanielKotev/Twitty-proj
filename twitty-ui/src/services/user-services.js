@@ -37,14 +37,15 @@ class UserServices {
         return axios.get(API_URL +'/getById', { params:{id: id}})
     }
 
-    getPostsOfFollowed(id, currentPage, perPage) {
+    getPostsOfFollowed(id, currentPage, perPage, content) {
         return axios.get(API_URL + '/followedPosts',
             {
                 params:
                     {
                         id: id,
                         currentPage: currentPage,
-                        perPage: perPage
+                        perPage: perPage,
+                        content: content
                     }
             })
     }

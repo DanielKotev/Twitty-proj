@@ -3,7 +3,7 @@
     <h1>Posts</h1>
     <div class="container">
       <div class="searchBox">
-        <input class="search-txt" type="text" v-model="filter.content" placeholder="search posts"/>
+        <input class="search-txt" type="text" v-model="content" placeholder="search posts"/>
           <a class="search-btn">
             <svg viewBox="0 0 24 24" height="70px" v-on:click="searchPosts">
               <g class="search-btn">
@@ -16,14 +16,11 @@
           </a>
       </div>
     </div>
-    <create-post/>
+    <create-post v-on:posted="updatePage"/>
     <div v-if="this.posts.length != 0">
       <div class="posts" v-for="post in posts" v-bind:key="post.id">
         <post v-bind:post="post" v-on:deleted="updatePage"/>
       </div>
-    </div>
-    <div v-else>
-      <h5>No posts found</h5>
     </div>
   </div>
 </template>
@@ -32,7 +29,6 @@
 import Post from "../components/Post";
 import CreatePost from "../components/CreatePost";
 import UserServices from "../services/user-services";
-import PostServices from "../services/post-services";
 
 export default {
   name: "HomePage",
@@ -46,10 +42,7 @@ export default {
       currentPage: 1,
       perPage: 5,
       totalPages: '',
-      filter:[{
-        content:''
-      }
-      ]
+      content: ''
     }
   },
   mounted () {
@@ -62,20 +55,17 @@ export default {
   },
   methods: {
     getNextPageOfPosts () {
-      UserServices.getPostsOfFollowed(this.$store.state.userId, this.currentPage++, this.perPage).then(response => {
+      UserServices.getPostsOfFollowed(this.$store.state.userId, this.currentPage++, this.perPage, this.content).then(response => {
         if (response.data.posts) {
             this.posts.push(...response.data.posts)
         }
         this.totalPages = response.data.totalPages
       })
     },
-    searchPosts (){
-      PostServices.getPosts(this.filter,this.currentPage,this.perPage).then(
-          response =>{
-            this.posts = response.data.posts
-          }
-      )
-      }
+    searchPosts () {
+      this.currentPage = 1
+      this.posts = []
+      this.getNextPageOfPosts()
     },
     scroll () {
       window.onscroll = () => {
@@ -86,16 +76,13 @@ export default {
         }
       }
     },
-    updatePage(id) {
-      this.posts= this.posts.filter(p => p.id != id)
+    updatePage() {
+      console.log('update page called')
+      this.posts = []
+      this.currentPage = 1
+      this.getNextPageOfPosts()
     }
-    // computed: {
-    //   searchPosts: function (){
-    //     return this.posts((post)=>{
-    //       return post.content.match(this.filter);
-    //     })
-    //   }
-    // }
+  }
 }
 </script>
 
@@ -146,7 +133,7 @@ export default {
   width: 300px;
   padding: 0 6px;
 }
-.searchBox:hover>.search-btn{
+.searchBox:hover.search-btn{
   padding: 0 6px;
   width: 39px;
   height: 39px;

@@ -15,7 +15,7 @@
         <router-link :to="{name: 'UserPage', params: {id: post.user.id}}" class="name" tag="h5">{{post.user.username}}</router-link>
         <pre class="text-format">{{post.content}}</pre>
       </div>
-        <b-form id="add-comment" v-on:submit="saveComment">
+        <b-form class="add-comment" v-on:submit.prevent="saveComment">
           <b-form-input placeholder="Write a new comment..." v-model="commentText" class="no-background" required></b-form-input>
           <b-button size="sm" type="submit">Comment</b-button>
         </b-form>
@@ -68,32 +68,26 @@ export default {
     this.getComments()
   },
   methods: {
-  getComments () {
-    PostServices.getComments(this.post.id).then(response =>{
-      this.comments = response.data.comments
-      this.numberOfComments = response.data.numberOfComments
-    })
-  },
+    getComments () {
+      PostServices.getComments(this.post.id).then(response =>{
+        this.comments = response.data.comments
+        this.numberOfComments = response.data.numberOfComments
+      })
+    },
     saveComment () {
       CommentServices.saveComment(this.commentText, this.$store.state.userId , this.post.id).then(
-          () => {
-            this.getComments()
-            this.$forceUpdate()
-          }
+          () => this.getComments()
       )
       this.commentText = ''
     },
     deleteComment (commentId) {
       CommentServices.deleteComment(commentId).then(
-          () => {
-            this.getComments()
-            this.$forceUpdate()
-          }
+          () => this.getComments()
       )
     },
     deletePost () {
       PostServices.deletePost(this.post.id).then(
-          this.$emit('deleted', this.post.id)
+          () => this.$emit('deleted')
       )
     },
     isOwnPost () {
@@ -139,7 +133,7 @@ export default {
     height: auto;
   }
 
-  #add-comment {
+  .add-comment {
     display: flex;
     margin: 5px;
   }

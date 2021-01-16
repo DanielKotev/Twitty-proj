@@ -1,6 +1,6 @@
 <template>
  <div id="form">
-   <b-form v-on:submit="savePost">
+   <b-form v-on:submit.prevent="savePost">
      <b-form-textarea id="text-area" placeholder="Create a new post..." rows="6" v-model="text" no-resize required></b-form-textarea>
      <b-button id="button" type="submit">Post</b-button>
    </b-form>
@@ -20,7 +20,7 @@ export default {
   methods: {
     savePost () {
       PostServices.savePost(this.text, this.$store.state.userId).then(
-          () => window.location.reload()
+          () => this.$emit('posted')
       )
       this.text = ''
     }

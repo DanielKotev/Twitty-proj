@@ -18,7 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("Select u FROM User u WHERE LOWER(u.username) LIKE" +
             ":#{#name==null || #name.isEmpty() ? '%' : '%' + #name + '%'}")
-    Page<User>findFriends(Pageable pageable ,String name);
+    Page<User>findFriends(Pageable pageable, String name);
 
     @Query("SELECT u from User u Where u.username=:username AND u.password=:password")
     Optional<User> LoginCheckAuth(String username, String password);
@@ -29,9 +29,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT p " +
             "FROM Post p " +
             "WHERE p.user.id = :id OR p.user.id IN " +
-            "(SELECT f.id FROM User u JOIN u.following f WHERE u.id = :id) " +
+            "(SELECT f.id FROM User u JOIN u.following f WHERE u.id = :id) AND " +
+            "p.content LIKE :#{#content==null || #content.isEmpty() ? '%' : '%' + #content + '%'} " +
             "ORDER BY p.id DESC")
-    Page<Post> fingPostsOfFollowedUsers(Pageable pageable, Long id);
+    Page<Post> fingPostsOfFollowedUsers(Pageable pageable, Long  id, String content);
 
     @Query("SELECT p FROM User u JOIN u.posts p WHERE u.id = :id ORDER BY p.id DESC")
     Page<Post> fingPostsOfUser(Pageable pageable, Long id);

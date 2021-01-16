@@ -111,10 +111,11 @@ public ResponseEntity<?>paginateFriends(@RequestParam String name,
     @GetMapping("/followedPosts")
     public ResponseEntity<?> getPostsOfFollowedUsers(@RequestParam(defaultValue = "1") int currentPage,
                                                          @RequestParam(defaultValue = "5") int perPage,
-                                                         @RequestParam Long id) {
+                                                         @RequestParam Long id,
+                                                         @RequestParam(required = false) String content) {
 
         Pageable pageable = PageRequest.of(currentPage - 1, perPage);
-        Page<Post> result = userRepository.fingPostsOfFollowedUsers(pageable, id);
+        Page<Post> result = userRepository.fingPostsOfFollowedUsers(pageable, id, content);
 
         Map<String, Object> response = new HashMap<>();
 
