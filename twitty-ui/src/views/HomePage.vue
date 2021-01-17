@@ -5,7 +5,7 @@
       <div class="searchBox">
         <input class="search-txt" type="text" v-model="content" placeholder="search posts"/>
           <a class="search-btn">
-            <svg viewBox="0 0 24 24" height="70px" v-on:click="searchPosts">
+            <svg viewBox="0 0 24 24" height="70px" v-on:click="updatePage">
               <g class="search-btn">
               <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91
                3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6
@@ -65,11 +65,6 @@ export default {
         this.totalPages = response.data.totalPages
       })
     },
-    searchPosts () {
-      this.currentPage = 1
-      this.posts = []
-      this.getNextPageOfPosts()
-    },
     scroll () {
       window.onscroll = () => {
         let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
@@ -80,7 +75,6 @@ export default {
       }
     },
     updatePage() {
-      console.log('update page called')
       this.posts = []
       this.currentPage = 1
       this.getNextPageOfPosts()

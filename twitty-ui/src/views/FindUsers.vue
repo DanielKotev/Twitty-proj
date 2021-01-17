@@ -17,7 +17,7 @@ export default {
     return {
       search: '',
       users: [],
-      perPage: 10,
+      perPage: 20,
       currentPage: 1
     }
   },

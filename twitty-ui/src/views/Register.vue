@@ -1,7 +1,5 @@
 <template>
-
   <div class="row" >
-
 
     <div class="col-md-4"></div>
     <div class="col-md-3">
@@ -45,8 +43,6 @@
 
 <script>
 
-
-
 import UserServices from '../services/user-services'
 export default {
   name: 'Register',
@@ -67,10 +63,10 @@ export default {
             console.log(response.data)
           }
       )
+      this.$router.push({name: 'Login'})
     },
     onSubmit(event) {
       event.preventDefault()
-      alert(JSON.stringify(this.form))
     }
   }
 }

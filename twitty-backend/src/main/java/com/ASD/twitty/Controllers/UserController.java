@@ -85,9 +85,6 @@ public ResponseEntity<?>paginateFriends(@RequestParam String name,
         return new ResponseEntity<>(response,HttpStatus.OK);
 
 }
-
-
-
     @PostMapping("/deactivateUser")
     public ResponseEntity<?> deactivateUser(@RequestParam() String username)
     {

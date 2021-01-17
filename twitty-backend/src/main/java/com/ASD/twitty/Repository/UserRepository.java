@@ -28,8 +28,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT p " +
             "FROM Post p " +
-            "WHERE p.user.id = :id OR p.user.id IN " +
-            "(SELECT f.id FROM User u JOIN u.following f WHERE u.id = :id) AND " +
+            "WHERE (p.user.id = :id OR p.user.id IN " +
+            "(SELECT f.id FROM User u JOIN u.following f WHERE u.id = :id)) AND " +
             "p.content LIKE :#{#content==null || #content.isEmpty() ? '%' : '%' + #content + '%'} " +
             "ORDER BY p.id DESC")
     Page<Post> fingPostsOfFollowedUsers(Pageable pageable, Long  id, String content);
